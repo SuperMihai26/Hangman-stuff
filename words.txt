@@ -95,7 +95,6 @@ cratima
 credit
 cripta
 critic
-croquet
 culegere
 curacao
 curent
@@ -278,9 +277,10 @@ psihic
 publicitate
 pufos
 punctaje
-pupil
+palindrom
 putere
 puzzle
+quiproquo
 raport
 realitate
 realiza
