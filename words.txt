@@ -60,7 +60,7 @@ bivol
 bufon
 pachet
 plin
-șorar
+pseudocod
 calif
 cancer
 capturare
@@ -218,7 +218,7 @@ muzical
 misticiza
 naftalina
 nominaliza
-neplată
+electric
 zilele 
 noastre
 nimfe
@@ -303,7 +303,7 @@ sindrom
 tableta
 ciocolata
 tehnica
-fir
+pacifist
 risipitor
 topaz
 transcriere
