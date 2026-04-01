@@ -151,7 +151,6 @@ galaxie
 galon
 galvaniza
 geamuri
-gemet
 general
 generator
 glume
@@ -285,6 +284,7 @@ raport
 realitate
 realiza
 recent
+recomandare
 reducere
 reevaluare
 reflecta
