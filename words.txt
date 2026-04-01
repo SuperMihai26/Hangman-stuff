@@ -105,6 +105,7 @@ cripta
 cristalin
 critic
 culegere
+culoare
 curacao
 curent
 cutie
@@ -123,6 +124,7 @@ diploma
 discret
 discuta
 disperare
+distractiv
 document
 dormitor
 drepturi
@@ -155,6 +157,7 @@ fiord
 fizica
 flegma
 flexibil
+fricos
 frigorific
 fruct
 fucsia
@@ -227,6 +230,7 @@ misticiza
 mizerie
 moderniza
 monoid
+monstruos
 motor
 mucegai
 munca
@@ -260,6 +264,7 @@ palat
 papuci
 pasiv
 pauza
+pentru
 percepe
 personal
 pescuit
@@ -318,6 +323,7 @@ seminar
 sezon
 sfinx
 sindrom
+sistem
 socialist
 spectacol
 spionaj
