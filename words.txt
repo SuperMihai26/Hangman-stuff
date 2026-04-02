@@ -158,6 +158,7 @@ evalua
 evaluare
 executa
 expunere
+extraterestru
 factor
 falsifica
 familie
@@ -213,7 +214,6 @@ jogging
 jovial
 joystick
 judiciar
-jumbo
 kazoo
 kilobyte
 kilogram
