@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Spânzurătoarea</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            text-align: center;
+			background-image: url('https://st2.depositphotos.com/1010683/7643/i/950/depositphotos_76431777-stock-photo-crumpled-white-paper-sheet.jpg');
+        }
+        .button {
+            margin: 2px;
+            padding: 10px;
+            font-size: 14px;
+            color: black;
+			font-family: 'Comic Sans MS';
+            background-color: white;
+        }
+        .disabled {
+            background-color: grey;
+            pointer-events: none;
+        }
+    </style>
+    <script>
+        let wins = localStorage.getItem('wins') ? parseInt(localStorage.getItem('wins')) : 0;
+        let loses = localStorage.getItem('loses') ? parseInt(localStorage.getItem('loses')) : 0;
+        let words = [];
+        let currentWord = "";
+        let lives = 7;
+        let used_letters = [];
+        let k = -1;
+        let hintUsed = false;
+
+        async function word_generation() {
+            return await fetch('https://raw.githubusercontent.com/SuperMihai26/Hangman-stuff/refs/heads/main/words.txt')
+                .then(response => response.text())
+                .then(data => {
+                    words = data.split('\n');
+                    generateRandomWord();
+                });
+        }
+
+        function generateRandomWord() {
+            const randomIndex = Math.floor(Math.random() * words.length);
+            currentWord = words[randomIndex].trim();
+            displayCurrentProgress();
+        }
+
+        function displayCurrentProgress() {
+            let currentProgress = [];
+            for (let i = 0; i < currentWord.length; ++i) {
+                currentProgress.push("_");
+            }
+            document.getElementById('word').innerText = currentProgress.join(" ");
+            document.getElementById('lives').innerText = `Lives: ${lives}`;
+            updateImage();
+        }
+
+        function updateImage() {
+            document.getElementById('hangmanImage').src = `https://raw.githubusercontent.com/SuperMihai26/Hangman-stuff/refs/heads/main/poz${7 - lives}.png`;
+        }
+
+        function guessLetter(letter, element, color, element2) {
+            if (currentWord.includes(letter) && used_letters.indexOf(letter) === -1) {
+                used_letters.push(letter);
+                let currentProgress = document.getElementById('word').innerText.split(" ");
+                for (let i = 0; i < currentWord.length; ++i) {
+                    if (currentWord[i] === letter) {
+                        currentProgress[i] = letter;
+                    }
+                }
+                document.getElementById('word').innerText = currentProgress.join(" ");
+            } else {
+                lives--;
+                document.getElementById('lives').innerText = `Lives: ${lives}`;
+                updateImage();
+                if (lives <= 0) {
+                    alert("Ai pierdut!\nCuvântul era: " + currentWord);
+                    loses++;
+                    localStorage.setItem('loses', loses);
+					document.getElementById('score').innerText = `Câștiguri: ${wins} | Pierderi: ${loses}`;
+                    disableButtons();
+                }
+            }
+            used_letters[++k] = letter;
+            element.style.backgroundColor = color;
+            if (document.getElementById('word').innerText.split(" ").every(char => char !== "_")) {
+                alert("FELICITĂRI!\nCuvântul era: " + currentWord);
+                wins++;
+                localStorage.setItem('wins', wins);
+                disableButtons();
+				document.getElementById('score').innerText = `Câștiguri: ${wins} | Pierderi: ${loses}`;
+            }
+			if (lives == 2) { element2.style.backgroundColor = color; hintUsed = true; }
+        }
+
+        function disableButtons() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => {
+                if (!button.classList.contains('refresh-button')) {
+                    button.classList.add('disabled');
+                }
+            });
+        }
+
+        function hint(element) {
+            if (!hintUsed && lives > 2) {
+                hintUsed = true;
+                lives -= 2;
+                document.getElementById('lives').innerText = `Lives: ${lives}`;
+                element.style.backgroundColor = 'grey';
+                revealRandomLetter();
+            } else {
+                alert("Nu poți folosi indiciul!");
+                hintUsed = true;
+            }
+            updateImage();
+            if (document.getElementById('word').innerText.split(" ").every(char => char !== "_")) {
+                alert("FELICITĂRI!\nCuvântul era: " + currentWord);
+                wins++;
+                localStorage.setItem('wins', wins);
+				document.getElementById('score').innerText = `Câștiguri: ${wins} | Pierderi: ${loses}`;
+                disableButtons();
+            }
+        }
+
+        function revealRandomLetter() {
+            const unrevealedIndices = [];
+            for (let i = 0; i < currentWord.length; i++) {
+                if (!used_letters.includes(currentWord[i])) {
+                    unrevealedIndices.push(i);
+                }
+            }
+            if (unrevealedIndices.length > 0) {
+                const randomIndex = unrevealedIndices[Math.floor(Math.random() * unrevealedIndices.length)];
+                const letterToReveal = currentWord[randomIndex];
+                let currentProgress = document.getElementById('word').innerText.split(" ");
+                for (let i = 0; i < currentWord.length; i++) {
+                    if (currentWord[i] === letterToReveal) {
+                        currentProgress[i] = letterToReveal;
+                    }
+                }
+                document.getElementById('word').innerText = currentProgress.join(" ");
+            }
+        }
+		
+		function reset(){
+			wins=0;localStorage.setItem('wins', wins);
+			loses=0;localStorage.setItem('loses', loses);
+			document.getElementById('score').innerText = `Câștiguri: ${wins} | Pierderi: ${loses}`;
+		}
+
+        window.onload = function() {
+            word_generation();
+            document.getElementById('score').innerText = `Câștiguri: ${wins} | Pierderi: ${loses}`;
+        };
+    </script>
+</head>
+
+<body>
+    <h1>Spânzurătoarea!</h1>
+    <p>Bun venit!</p>
+    <p>Încearcă să ghicești cuvintele misterioase!</p>
+    <p>Dacă ai nevoie de ajutor, poți primi un indiciu(o literă este dezvăluită), dar pierzi două vieți(lives)!</p>
+    <p>Crezi că vei reuși?</p>
+    <img id="hangmanImage" src="https://raw.githubusercontent.com/SuperMihai26/Hangman-stuff/refs/heads/main/poz0.png" width="300" height="300" alt="Hangman Image">
+    <p id="word"></p>
+    <p id="lives">Lives: 7</p>
+    <p id="score">Câștiguri: 0 Pierderi: 0</p>
+	<button id="resetare" class="button" style="background-color:#ba0000" onclick="reset()">Resetare scor</button>
+    <div>
+        <button id="Indiciu" class="button" style="background-color:#000791" onclick="hint(this)"> Indiciu?(vei pierde 2 vieți)</button>
+        <p></p>
+        <button id="a" class="button" onclick="guessLetter('a',this,'grey',Indiciu)">A</button>
+        <button id="b" class="button" onclick="guessLetter('b',this,'grey',Indiciu)">B</button>
+        <button id="c" class="button" onclick="guessLetter('c',this,'grey',Indiciu)">C</button>
+        <button id="d" class="button" onclick="guessLetter('d',this,'grey',Indiciu)">D</button>
+        <button id="e" class="button" onclick="guessLetter('e',this,'grey',Indiciu)">E</button>
+        <button id="f" class="button" onclick="guessLetter('f',this,'grey',Indiciu)">F</button>
+        <p></p>
+        <button id="g" class="button" onclick="guessLetter('g',this,'grey',Indiciu)">G</button>
+        <button id="h" class="button" onclick="guessLetter('h',this,'grey',Indiciu)">H</button>
+        <button id="i" class="button" onclick="guessLetter('i',this,'grey',Indiciu)">I</button>
+        <button id="j" class="button" onclick="guessLetter('j',this,'grey',Indiciu)">J</button>
+        <button id="k" class="button" onclick="guessLetter('k',this,'grey',Indiciu)">K</button>
+        <button id="l" class="button" onclick="guessLetter('l',this,'grey',Indiciu)">L</button>
+        <p></p>
+        <button id="m" class="button" onclick="guessLetter('m',this,'grey',Indiciu)">M</button>
+        <button id="n" class="button" onclick="guessLetter('n',this,'grey',Indiciu)">N</button>
+        <button id="o" class="button" onclick="guessLetter('o',this,'grey',Indiciu)">O</button>
+        <button id="p" class="button" onclick="guessLetter('p',this,'grey',Indiciu)">P</button>
+        <button id="q" class="button" onclick="guessLetter('q',this,'grey',Indiciu)">Q</button>
+        <button id="r" class="button" onclick="guessLetter('r',this,'grey',Indiciu)">R</button>
+        <p></p>
+        <button id="s" class="button" onclick="guessLetter('s',this,'grey',Indiciu)">S</button>
+        <button id="t" class="button" onclick="guessLetter('t',this,'grey',Indiciu)">T</button>
+        <button id="u" class="button" onclick="guessLetter('u',this,'grey',Indiciu)">U</button>
+        <button id="v" class="button" onclick="guessLetter('v',this,'grey',Indiciu)">V</button>
+        <button id="w" class="button" onclick="guessLetter('w',this,'grey',Indiciu)">W</button>
+        <button id="x" class="button" onclick="guessLetter('x',this,'grey',Indiciu)">X</button>
+        <button id="y" class="button" onclick="guessLetter('y',this,'grey',Indiciu)">Y</button>
+        <button id="z" class="button" onclick="guessLetter('z',this,'grey',Indiciu)">Z</button>
+        <p></p>
+        <button id="reloadare" style="background-color:white" class="button refresh-button" onclick="location.reload()">
+            <img src="https://cdn-icons-png.flaticon.com/512/2725/2725164.png" width="50" height="50" alt="Refresh">
+        </button>
+    </div>
+</body>
+</html>
